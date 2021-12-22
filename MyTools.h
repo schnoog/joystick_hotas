@@ -25,40 +25,40 @@ int SCALE_JOYSTICK (int raw, int corr ){
   return (int)outval;
 }
 
-int SCALE_JOYSTICK_Y (int raw, int corr) {
-  int Deadband = 1;
-  int Curving = 4;
+int runningAverage(int M) {
+  #define LM_SIZE 4
+  static int LM[LM_SIZE];      // LastMeasurements
+  static byte index = 0;
+  static long sum = 0;
+  static byte count = 0;
 
-  int SIGN = 1;
-  int scaled = raw;
-  scaled = map (scaled, 0, 1023, -1023, 1023);
-  if (scaled < 0) {
-    SIGN = -1;
-  }
-  scaled = abs (scaled);
-  if (scaled < Deadband){
-    scaled = 0;
-  }
-  else {
-    scaled = (long) (scaled-Deadband)*1000/ (long)(1000-Deadband);
-  }
-  int squared = ((long)scaled* (long) scaled)/1000;
-  switch (Curving) {
-    case 0:
-       break;
-    case 1: // low
-      scaled = (2*scaled + squared)/3;
-      break;
-    case 2: // mild
-      scaled = (scaled + squared)/2;
-      break;
-    case 3: // mid
-      scaled = (scaled + 2*squared)/3;
-      break;
-    case 4: // strong
-      scaled = squared;
-     break;
-  }
-  scaled = SIGN*scaled;
-  return scaled;
-} // end of SCALE_JOYSTICK
+  // keep sum updated to improve speed.
+  sum -= LM[index];
+  LM[index] = M;
+  sum += LM[index];
+  index++;
+  index = index % LM_SIZE;
+  if (count < LM_SIZE) count++;
+
+  return (int)sum / count;
+}
+
+
+
+long runningAverageLong(long M) {
+  #define LM_SIZE 10
+  static int LM[LM_SIZE];      // LastMeasurements
+  static byte index = 0;
+  static long sum = 0;
+  static byte count = 0;
+
+  // keep sum updated to improve speed.
+  sum -= LM[index];
+  LM[index] = M;
+  sum += LM[index];
+  index++;
+  index = index % LM_SIZE;
+  if (count < LM_SIZE) count++;
+
+  return sum / count;
+}

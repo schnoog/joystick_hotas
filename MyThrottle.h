@@ -1,18 +1,14 @@
-#include <HampelFilter.h>
-
-HampelFilter dataBuffer = HampelFilter(0.00, 3, 3.50);
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 
 int average = 0;
-int LidarRounds = 3;
 int ThrottleMin = 0;
 int ThrottleMax = 1023;
 
 int LidarMin = 60;
 int LidarMax = 228;
 int LastThrottle;
-int MinThrottleSingleStep = 6;
+int MinThrottleSingleStep = 1;
 
 float ThrottleStep;
 
@@ -32,25 +28,10 @@ void Throttle_Setup(){
 int GetThrottleRaw(){
     VL53L0X_RangingMeasurementData_t measure;
     lox.rangingTest(&measure, false); // pass in 'true' to get debug data printout!
-    
- //   return (int)measure.RangeMilliMeter;
-    
     int mdata;
-    average = 0;
-    for (int i=0; i < LidarRounds; i++) {
-      mdata = (int)measure.RangeMilliMeter;
-      dataBuffer.write(mdata);
-      average = average + measure.RangeMilliMeter;
-    }
-
-    average = average/LidarRounds;
-    average = (int)dataBuffer.readMedian();
-
-    //Serial.print("Dist raw value:");
-    //Serial.println(average); 
-    //return mdata;
+    mdata = (int)measure.RangeMilliMeter;
+    average  = runningAverage(mdata);
     return average;
-    //return measure.RangeMilliMeter;
 }
 
 
@@ -58,6 +39,7 @@ int GetThrottleRaw(){
 int GetThrottle(){
 //    int Myval = GetThrottleAvg();
     int Myval = GetThrottleRaw();
+    debugln(Myval);
     if (Myval <= LidarMin) return ThrottleMin;
     if (Myval >= LidarMax) return ThrottleMax;
     
@@ -66,13 +48,18 @@ int GetThrottle(){
     Myval = Myval - LidarMin;
     float TmpVal = (float) Myval * ThrottleStep;
     int WorkVal = (int) TmpVal;
-    if (WorkVal > LastThrottle + MinThrottleSingleStep) {
+    if ( abs(WorkVal - LastThrottle) > MinThrottleSingleStep){
         LastThrottle = WorkVal;
         return WorkVal;
     }
-    if (WorkVal < LastThrottle - MinThrottleSingleStep) {
-        LastThrottle = WorkVal;
-        return WorkVal;
-    }
+    
+    //if (WorkVal > LastThrottle + MinThrottleSingleStep) {
+    //    LastThrottle = WorkVal;
+//        return WorkVal;
+//    }
+//    if (WorkVal < LastThrottle - MinThrottleSingleStep) {
+//        LastThrottle = WorkVal;
+//        return WorkVal;
+//    }
     return LastThrottle;
 }

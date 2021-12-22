@@ -168,10 +168,10 @@ void GetInputs(){
         //get Axis Values
         axis0 = analogRead(A0);
         axis1 = analogRead(A1);
-debug("Read:");
-debug(axis0);
-debug("---");
-debugln(axis1);
+//debug("Read:");
+//debug(axis0);
+//debug("---");
+//debugln(axis1);
 
         axis0 = axis0 + CorrAxis0;
         axis1 = axis1 + CorrAxis1;
@@ -194,10 +194,10 @@ debugln(axis1);
         axis0 = SCALE_JOYSTICK(axis0,CorrAxis0);
         axis1 = SCALE_JOYSTICK(axis1,CorrAxis1);
 
-debug("Scal:");
-debug(axis0);
-debug("---");
-debugln(axis1);
+//debug("Scal:");
+//debug(axis0);
+//debug("---");
+//debugln(axis1);
 
 
 
@@ -266,10 +266,10 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
         }
         Button++;
 
-debug("Out-:");
-debug(axis0);
-debug("---");
-debugln(axis1);
+//debug("Out-:");
+//debug(axis0);
+//debug("---");
+//debugln(axis1);
         
         
         //einmal durchreichen
@@ -309,7 +309,7 @@ debugln(axis1);
         if (Throttlevel != LastThrottleReport){
             //    Serial.print(Throttlevel);
             //    Serial.print(" - ");
-            //    Serial.println(average);                
+                debugln(average);                
                 LastThrottleReport = Throttlevel;
         }
 

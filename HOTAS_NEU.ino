@@ -23,15 +23,15 @@
 
 
 int LidarDist;
-
-
+int LastDur;
+unsigned long LastCall;
 void setup() {
   Serial.begin(115200);
   delay(100);
   InputDef_Setup();
   Throttle_Setup();
   MCP_Setup();
-  
+  LastCall = micros();
   // put your setup code here, to run once:
 
 }
@@ -41,5 +41,10 @@ void loop() {
   GetInputs();
   Joystick.sendState();
   Joystick2.sendState();
+  unsigned long dura = micros() - LastCall;
+  LastCall = micros();
+  debug("Loop average (us):");
+  debugln(runningAverageLong(dura));
+  
   //delay(1);
 }
