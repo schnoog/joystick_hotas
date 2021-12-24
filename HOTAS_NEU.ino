@@ -21,7 +21,7 @@
 
 #include "Settings.h"
 
-
+int ITA = 0;
 int LidarDist;
 int LastDur;
 unsigned long LastCall;
@@ -37,14 +37,21 @@ void setup() {
 }
 
 void loop() {
+  int Work;
   // put your main code here, to run repeatedly:
   GetInputs();
   Joystick.sendState();
   Joystick2.sendState();
   unsigned long dura = micros() - LastCall;
   LastCall = micros();
-  debug("Loop average (us):");
-  debugln(runningAverageLong(dura));
+  Work = runningAverageLong(dura);
+  
+  ITA++;
+  if(ITA > 9){
+    ITA = 0;
+     debug("Loop average (us):");
+     debugln(Work);
+  }
   
   //delay(1);
 }

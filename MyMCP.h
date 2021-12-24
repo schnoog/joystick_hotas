@@ -24,16 +24,9 @@ boolean  MCP_READY(int MCP_Num){
     Wire.beginTransmission(add);
     error = Wire.endTransmission();
     if (error == 0) {
-        Serial.print("MCP ");
-        Serial.print(MCP_Num);
-        Serial.println(" ready");
         return true;
     }
-        Serial.print("MCP ");
-        Serial.print(MCP_Num);
-        Serial.println(" missing");
     return false;
-
 }
 
 

@@ -191,8 +191,8 @@ void GetInputs(){
 //debug(" CVAL:");
 //debugln(CorrAxis1);
 
-        axis0 = SCALE_JOYSTICK(axis0,CorrAxis0);
-        axis1 = SCALE_JOYSTICK(axis1,CorrAxis1);
+        axis0 = SCALE_JOYSTICK(axis0);
+        axis1 = SCALE_JOYSTICK(axis1);
 
 //debug("Scal:");
 //debug(axis0);

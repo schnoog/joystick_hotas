@@ -1,8 +1,8 @@
-
+#define LM_SIZE 4
 int CorrAxis0 = 0;
 int CorrAxis1 = 0;
 
-int SCALE_JOYSTICK (int raw, int corr ){
+int SCALE_JOYSTICK (int raw ){
   int Off = abs(512 - raw);
   
   long workval = Off;
@@ -26,7 +26,7 @@ int SCALE_JOYSTICK (int raw, int corr ){
 }
 
 int runningAverage(int M) {
-  #define LM_SIZE 4
+  
   static int LM[LM_SIZE];      // LastMeasurements
   static byte index = 0;
   static long sum = 0;
@@ -46,7 +46,7 @@ int runningAverage(int M) {
 
 
 long runningAverageLong(long M) {
-  #define LM_SIZE 10
+  
   static int LM[LM_SIZE];      // LastMeasurements
   static byte index = 0;
   static long sum = 0;
