@@ -40,7 +40,7 @@ void InputDef_Setup(){
     pinMode(A1, INPUT);
     pinMode(A2, INPUT);
     pinMode(A3, INPUT);
-
+    int average;
 
     average = 0;
     for (int i=0; i < 10; i++) {
@@ -304,15 +304,14 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
 
         // Throttle
         int Throttlevel = GetThrottle();
-        Joystick.setThrottle(Throttlevel);        
+                
         //Only reporting changes
-        if (Throttlevel != LastThrottleReport){
-            //    Serial.print(Throttlevel);
-            //    Serial.print(" - ");
-                debugln(average);                
+        if (Throttlevel < 1024){
+        Joystick.setThrottle(Throttlevel);
+        if (Throttlevel != LastThrottleReport){                
                 LastThrottleReport = Throttlevel;
         }
-
+        }
 
 
 }
