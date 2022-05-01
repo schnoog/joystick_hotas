@@ -13,15 +13,15 @@ bool MCPR2 = false;
 
 boolean  MCP_READY(int MCP_Num){
     return true;
-    uint8_t add;
+    uint8_t addr;
     byte error;
 
 
-    if (MCP_Num == 0) add = addr1;
-    if (MCP_Num == 1) add = addr2;
-    if (MCP_Num == 2) add = addr3;
+    if (MCP_Num == 0) addr = addr1;
+    if (MCP_Num == 1) addr = addr2;
+    if (MCP_Num == 2) addr = addr3;
     Wire.begin();
-    Wire.beginTransmission(add);
+    Wire.beginTransmission(addr);
     error = Wire.endTransmission();
     if (error == 0) {
         return true;
@@ -47,26 +47,4 @@ void MCP_Setup(){
           if(MCPR2)mcp3.pinMode(i, INPUT);
           if(MCPR2)mcp3.pullUp(i, HIGH);
     }
-}
-
-void MCP_LoopA(){
-    Serial.print("MCP1:");
-    for (int i=0; i < 16; i++) {
-        Serial.print(mcp1.digitalRead(i));
-    }
-    Serial.println();
-    Serial.print("MCP2:");
-    for (int i=0; i < 16; i++) {
-        Serial.print(mcp2.digitalRead(i));
-    }
-    Serial.println();
-}
-
-void MCP_Loop(){
-    for (int i=0; i < 16; i++) {
-        if ((int)mcp1.digitalRead(i) == (int)0){
-            Serial.println(i);
-        }
-    }
-
 }

@@ -9,7 +9,7 @@
 // 18 - 31  MCP 2
 
 
-int LastThrottleReport = 9999;
+
 int axis0 = 0;
 int axis1 = 0;
 int axis2 = 0;
@@ -55,13 +55,6 @@ void InputDef_Setup(){
     }
     average = average/10;
     CorrAxis1 = 512 - average;
-
-
-
-
-
-
-
 }
 
 
@@ -86,6 +79,8 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                         debug(BtnNum);
                         debug(" - ");
                         debugln(FinalBtnNum);
+
+/*
                         if(JoyStickNum == 2){
                           if(BtnNum == 39) SuppressStep++;
                           if(BtnNum == 40) SuppressStep++;
@@ -107,7 +102,7 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                         }else{
                           SuppressStep = 0 ; 
                         }
-                        
+*/                        
                         }else{
                             if(IsModified){
                                 VirtAxMod_ReplacementKeyWork = true;
@@ -158,53 +153,34 @@ void GetInputs(){
             debounceVal(Button,(int) !mcp1.digitalRead(s),1);
             Button++;
         }
-// Todo:Modifier - wenn gedrückt axis0 und 1 auf Mittelstellung (512) setzen
-// Analog zu digital wandeln
+        // Todo:Modifier - wenn gedrückt axis0 und 1 auf Mittelstellung (512) setzen
+        // Analog zu digital wandeln
 
-        // Analog To Digital Trick
-        //get Axis Values
+        //auslesen der 2 achsen des daumen joysticks
         axis0 = analogRead(A0);
         axis1 = analogRead(A1);
-//debug("Read:");
-//debug(axis0);
-//debug("---");
-//debugln(axis1);
 
+        //Nullpunkt-Korrektur der Werte
         axis0 = axis0 + CorrAxis0;
         axis1 = axis1 + CorrAxis1;
+        //Nullpunkt flattern beseitigen (zwischen 501 und 523 wird zu 512)
         if (axis0 > 501 && axis0 < 523){axis0 = 512;}
         if (axis1 > 501 && axis1 < 523){axis1 = 512;}
+        //Eventuelle Grenzverletzungen entfernen
         if (axis0 < 0) axis0 = 0; 
         if (axis0 > 1023) axis0 = 1023;
         if (axis1 < 0) axis1 = 0;
         if (axis1 > 1023) axis1 = 1023;
 
-//debug("Corr:");
-//debug(axis0);
-//debug(" CVAL:");
-//debug(CorrAxis0);
-//debug("---");
-//debug(axis1);
-//debug(" CVAL:");
-//debugln(CorrAxis1);
-
-        axis0 = SCALE_JOYSTICK(axis0);
-        axis1 = SCALE_JOYSTICK(axis1);
-
-//debug("Scal:");
-//debug(axis0);
-//debug("---");
-//debugln(axis1);
-
-
-
         //axis2 = analogRead(A2);
         //axis3 = analogRead(A3);
+        //binaere achsen (klick wenn groesser als schwellenwert)
         int axis0_A = 0;
         int axis0_B = 0;
         int axis1_A = 0;
         int axis1_B = 0;
 
+        //wenn modified Button gedrückt ist
         if (IsModified){
             int mmin = 512 - VirtAxDiff;
             int mmax = 512 + VirtAxDiff; 
@@ -300,14 +276,10 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
 
 
         // Throttle
-        int Throttlevel = GetThrottle();
-                
+        int Throttlevel = GetThrottle();                
         //Only reporting changes
         if (Throttlevel < 1024){
         Joystick.setThrottle(Throttlevel);
-        if (Throttlevel != LastThrottleReport){                
-                LastThrottleReport = Throttlevel;
-        }
         }
 
 

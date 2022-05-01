@@ -1,4 +1,5 @@
 #define DEBUG 1
+#define CONTINOUSTHROTTLE 1
 
 #if DEBUG == 1
 #define debug(x) Serial.print(x)
@@ -8,6 +9,7 @@
 #define debugln(x) 
 #endif
 
+//#include <SoftwareReset.h>
 #include "Adafruit_VL53L0X.h"
 
 #include "MyTools.h"
@@ -21,36 +23,34 @@
 
 #include "Settings.h"
 
-int ITA = 0;
 int LidarDist;
-int LastDur;
-unsigned long LastCall;
+long LoopStart = 0;
+int LoopCnt = 0;
+
+
 void setup() {
+
+#if DEBUG == 1
   Serial.begin(115200);
   delay(100);
+#endif
   InputDef_Setup();
   Throttle_Setup();
   MCP_Setup();
-  LastCall = micros();
-  // put your setup code here, to run once:
-
+  LoopStart = micros();
 }
 
 void loop() {
-  int Work;
-  // put your main code here, to run repeatedly:
-  GetInputs();
-  Joystick.sendState();
-  unsigned long dura = micros() - LastCall;
-  LastCall = micros();
-  Work = runningAverageLong(dura);
-  
-  ITA++;
-  if(ITA > 9){
-    ITA = 0;
-     debug("Loop average (us):");
-     debugln(Work);
+  long LL;
+  LoopCnt++;
+  if ( LoopCnt == 1000){
+    LL = micros() - LoopStart;
+    LoopCnt = 0;
+    LoopStart = micros();
+//    debug("Loop-duration:");
+//    debugln(LL);
   }
   
-  //delay(1);
+  GetInputs();
+  Joystick.sendState();
 }
