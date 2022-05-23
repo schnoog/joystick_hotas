@@ -155,14 +155,15 @@ void GetInputs(){
         }
         // Todo:Modifier - wenn gedrückt axis0 und 1 auf Mittelstellung (512) setzen
         // Analog zu digital wandeln
-
+        int axis0_raw;
+        int axis1_raw;
         //auslesen der 2 achsen des daumen joysticks
-        axis0 = analogRead(A0);
-        axis1 = analogRead(A1);
+        axis0_raw = analogRead(A0);
+        axis1_raw = analogRead(A1);
 
         //Nullpunkt-Korrektur der Werte
-        axis0 = axis0 + CorrAxis0;
-        axis1 = axis1 + CorrAxis1;
+        axis0 = axis0_raw + CorrAxis0;
+        axis1 = axis1_raw + CorrAxis1;
         //Nullpunkt flattern beseitigen (zwischen 501 und 523 wird zu 512)
         if (axis0 > 501 && axis0 < 523){axis0 = 512;}
         if (axis1 > 501 && axis1 < 523){axis1 = 512;}
@@ -282,5 +283,25 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
         Joystick.setThrottle(Throttlevel);
         }
 
+        debug(axis0_raw);
+        debug("<->");
+        debug(axis1_raw);
+        debug("<->");
+        debug(axis0);
+        debug("<->");
+        debug(axis1);
+        debug("<--->");
+        debug(WorkVal );
+        debug("<->");
+        debug(Throttlevel);
+        debug("-");
+        debug(NC);        
+        debug("/");
+        debug(NotOKVal);
+        debug("/");
+        debug(NotOKLimit);
+        debug("/Reset:");
+        debugln(ResetCount);
+        
 
 }

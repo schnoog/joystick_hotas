@@ -11,41 +11,42 @@ int LastThrottle = 0;
 int MinThrottleSingleStep = 1;
 int LSame;
 int NotOKVal = 0;
-int NotOKLimit = 30;
+int NotOKLimit = 5;
 int LSV;
 int MaxSame = 30;
 int RC = 9;
+int NC = 0;
+int ResetCount = 0;
+int WorkVal;
 #define SHT_LOX1 7
 
 
 void IniSHT(boolean Restart){
-    int Delay = 10;
-    if(Restart) Delay = 100;
+    if(!Restart)pinMode(SHT_LOX1, INPUT_PULLUP);
+    if(Restart)ResetCount++;
+    int Delay = 100;
     digitalWrite(SHT_LOX1, LOW);    
     delay(Delay);
     // all unreset
     digitalWrite(SHT_LOX1, HIGH);
     delay(Delay); 
-    if (!lox.begin()) {
-    while(1);
-    } 
+
+
+    while (!lox.begin()) {
+    debugln(F("Failed to boot VL53L0X"));
+    debugln("Adafruit VL53L0X XShut set Low to Force HW Reset");
+    digitalWrite(SHT_LOX1, LOW);
+    delay(Delay);
+    digitalWrite(SHT_LOX1, HIGH);
+    debugln("Adafruit VL53L0X XShut set high to Allow Boot");
+    delay(Delay);      
+    }
+    
 }
 
 
-//float ThrottleStep;
 
 #if CONTINOUSTHROTTLE == 1
-void Restart_ContinousOld(){
-  debugln("TOF restart");
-     if (!lox.begin()) {
-    while(1);
-    }
-    lox.configSensor(Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);     
- lox.stopRangeContinuous();
- delay(100);
- lox.startRangeContinuous(200);  
-}
-
 void Restart_Continous(){
   debugln("Rebooting");
   delay(10);
@@ -54,8 +55,6 @@ void Restart_Continous(){
   delay(100);
   lox.startRangeContinuous(200);  
 }
-
-
 #endif
 
 
@@ -63,16 +62,14 @@ void Restart_Continous(){
 void Throttle_Setup(){
     IniSHT(false);
     debugln("Setup Throttle");
+    #if CONTINOUSTHROTTLE == 1
+        LSV = 0;
+        LSame = 0;
+        lox.configSensor(Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);        
+        lox.startRangeContinuous(200);
+    #else
 
-#if CONTINOUSTHROTTLE == 1
-    LSV = 0;
-    LSame = 0;
-    lox.configSensor(Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);        
-    lox.startRangeContinuous(200);
-#else
-
-#endif
-    
+    #endif
     LastThrottle = 9999;
 }
 
@@ -80,41 +77,41 @@ int GetThrottleRaw(){
 
 #if CONTINOUSTHROTTLE == 1
     RC++;
-
     if ( RC == 10){
-    RC=1;  
-    
-
+        RC=1;  
         if(lox.isRangeComplete()){
-            int WorkVal = (int) lox.readRangeResult();
-    //        debugln("NewVal");        
+            //WorkVal = (int) lox.readRangeResult();
+            WorkVal = (int) lox.readRange();
             if(WorkVal > 0){
                 if(WorkVal < 300) LastRawThrottle = WorkVal;
                 NotOKVal = 0;
+            }else{
+                NC++;
+                if(NC == 2){
+                  NC = 0;
+                  Restart_Continous();                  
+                }
+              
+              
             }
-          
+                      
         }else{
             NotOKVal++;
             if(NotOKVal > NotOKLimit){
                   NotOKVal = 0;
                   Restart_Continous();
             }
-          
         }
-
     }
     
 #else
-
     VL53L0X_RangingMeasurementData_t measure;
     lox.rangingTest(&measure, false);
     if (measure.RangeStatus != 4) {  // phase failures have incorrect data
       LastRawThrottle = (int) measure.RangeMilliMeter;
     } 
 #endif
-  
 
-    
     return LastRawThrottle;
 }
 
@@ -122,16 +119,12 @@ int GetThrottleRaw(){
 
 int GetThrottle(){
     int Myval = GetThrottleRaw();
-//    debug("raw ");
-//    debug(Myval);
-//    debug(" mapped ");
-    int WorkVal = map(Myval, LidarMin  , LidarMax , ThrottleMin, ThrottleMax);
-//    debugln(WorkVal);
+    int MWorkVal = map(Myval, LidarMin  , LidarMax , ThrottleMin, ThrottleMax);
     if (Myval <= LidarMin) return ThrottleMin;
     if (Myval >= LidarMax) return ThrottleMax;
-    if ( abs(WorkVal - LastThrottle) > MinThrottleSingleStep){
-        LastThrottle = WorkVal;
-        return WorkVal;
+    if ( abs(MWorkVal - LastThrottle) > MinThrottleSingleStep){
+        LastThrottle = MWorkVal;
+        return MWorkVal;
     }
     return LastThrottle;
 }
