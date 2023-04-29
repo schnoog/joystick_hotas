@@ -39,7 +39,7 @@ bool IsModified = false;
 byte switch_state[64];
 byte switch_state_old[64];
 byte reading, clk, clk_old, realpin, realbutton;
-unsigned long debounce_time[64];
+unsigned long debounce_time[58];
 
 void InputDef_Setup(){
     pinMode(A0, INPUT);
@@ -82,12 +82,12 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                         if (BtnNum != VirtAxModifiereSuppressButton){
                         Joystick.pressButton(FinalBtnNum); 
 
-                        debug(F("Press Button "));
-                        debug(JoyStickNum);
-                        debug(" : ");
-                        debug(BtnNum);
-                        debug(" - ");
-                        debugln(FinalBtnNum);
+                      //  debug(F("Press Button "));
+                      //  debug(JoyStickNum);
+                      //  debug(F(" : "));
+                      //  debug(BtnNum);
+                      //  debug(" - ");
+                      //  debugln(FinalBtnNum);
 
 
 
@@ -97,12 +97,12 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                           if(BtnNum == 40) SuppressStep++;
                           if(BtnNum == 41) SuppressStep++;
                           if (SuppressStep == 3){
-                              debug("Schalte AxenButtons ");
+                      //        debug(F("Schalte AxenButtons "));
                               if(SuppressAxisBtn){
-                                  debugln("ein");
+                      //            debugln(F("ein"));
                                   SuppressAxisBtn = false;
                               }else{
-                                  debugln("aus");
+                      //            debugln(F("aus"));
                                   SuppressAxisBtn = true;                                
                               }
                               SuppressStep = 0 ;
@@ -290,6 +290,8 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
         Joystick.setYAxis(axis1);
         Joystick.setRxAxis(axis2);
         Joystick.setRyAxis(axis3);
+        Joystick.setZAxis(val0[0]);
+        Joystick.setRzAxis(val0[1]);
 
         // MCP 2 Digital Inputs
         int mcp2pins  [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
@@ -318,26 +320,32 @@ if(!SuppressAxisBtn) debounceVal(Button,axis1_B,1);
         if (Throttlevel < 1024){
         Joystick.setThrottle(Throttlevel);
         }
-
+        debug(Button);
+        debug(F(" Buttons "));
         debug(axis0_raw);
-        debug("<->");
+        debug(F("<->"));
         debug(axis1_raw);
-        debug("<->");
+        debug(F("<->"));
         debug(axis0);
         debug("<->");
         debug(axis1);
         debug("<--->");
         debug(WorkVal );
-        debug("<->");
+        debug(F("<->"));
         debug(Throttlevel);
-        debug("-");
+        debug(F("-"));
         debug(NC);        
-        debug("/");
+        debug(F("/"));
         debug(NotOKVal);
         debug("/");
         debug(NotOKLimit);
-        debug("/Reset:");
-        debugln(ResetCount);
-        
+        debug(F("/Reset:"));       
+        debug(ResetCount);
+        debug(F("ADS:"));
+        for (int X=0 ; X < 4 ; X++){
+          debug(val0[X]);
+          debug(" ");
+        }
+        debugln( );
 
 }

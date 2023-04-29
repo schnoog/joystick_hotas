@@ -13,7 +13,7 @@
 #include "Adafruit_VL53L0X.h"
 #include <avr/wdt.h>
 #include "MyTools.h"
-
+#include "MyADS.h"
 #include "Adafruit_MCP23017.h"
 #include "MyThrottle.h"
 #include "MyMCP.h"
@@ -25,7 +25,7 @@
 
 int LidarDist;
 long LoopStart = 0;
-int LoopCnt = 0;
+
 
 
 void setup() {
@@ -37,20 +37,12 @@ void setup() {
   InputDef_Setup();
   Throttle_Setup();
   MCP_Setup();
+  ADS_Setup();
   LoopStart = micros();
 }
 
 void loop() {
-  long LL;
-  LoopCnt++;
-  if ( LoopCnt == 1000){
-    LL = micros() - LoopStart;
-    LoopCnt = 0;
-    LoopStart = micros();
-//    debug("Loop-duration:");
-//    debugln(LL);
-  }
-  
+  ADS_Loop();
   GetInputs();
   Joystick.sendState();
 }

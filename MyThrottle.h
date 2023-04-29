@@ -37,11 +37,11 @@ void IniSHT(boolean Restart){
 
     while (!lox.begin()) {
     debugln(F("Failed to boot VL53L0X"));
-    debugln("Adafruit VL53L0X XShut set Low to Force HW Reset");
+    debugln(F("Adafruit VL53L0X XShut set Low to Force HW Reset"));
     digitalWrite(SHT_LOX1, LOW);
     delay(Delay);
     digitalWrite(SHT_LOX1, HIGH);
-    debugln("Adafruit VL53L0X XShut set high to Allow Boot");
+    debugln(F("Adafruit VL53L0X XShut set high to Allow Boot"));
     delay(Delay);      
     }
     
@@ -52,7 +52,7 @@ void IniSHT(boolean Restart){
 #if CONTINOUSTHROTTLE == 1
 void Restart_Continous(){
   ResetDevice();
-  debugln("Rebooting");
+  debugln(F("Rebooting"));
   delay(10);
   IniSHT(true);
   lox.configSensor(Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);  
@@ -65,7 +65,7 @@ void Restart_Continous(){
 
 void Throttle_Setup(){
     IniSHT(false);
-    debugln("Setup Throttle");
+    debugln(F("Setup Throttle"));
     #if CONTINOUSTHROTTLE == 1
         LSV = 0;
         LSame = 0;
