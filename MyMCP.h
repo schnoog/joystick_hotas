@@ -21,6 +21,7 @@ boolean  MCP_READY(int MCP_Num){
     if (MCP_Num == 1) addr = addr2;
     if (MCP_Num == 2) addr = addr3;
     Wire.begin();
+    //Wire.setClock(20000);
     Wire.beginTransmission(addr);
     error = Wire.endTransmission();
     if (error == 0) {
@@ -31,7 +32,7 @@ boolean  MCP_READY(int MCP_Num){
 
 
 void MCP_Setup(){
-    delay(10000);
+    delay(10);
     MCPR0 = MCP_READY(0);
     MCPR1 = MCP_READY(1);
     MCPR2 = MCP_READY(2);

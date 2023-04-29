@@ -15,12 +15,18 @@ int axis1 = 0;
 int axis2 = 0;
 int axis3 = 0;
 
+int Axis0_cutoffLow = 460;
+int Axis0_cutoffHigh = 500;
+int Axis1_cutoffLow = 485;
+int Axis1_cutoffHigh = 585;
+
+
 boolean SuppressAxisBtn = false;
 int SuppressStep = 0;
 
 
 
-int VirtAxDiff = 400;
+int VirtAxDiff = 200;
 
 int VirtAxModifierButton = 0;
 int VirtAxModifiereSuppressButton = 12;
@@ -55,6 +61,9 @@ void InputDef_Setup(){
     }
     average = average/10;
     CorrAxis1 = 512 - average;
+    CorrAxis0 = 0;
+    CorrAxis1 = 0;
+
 }
 
 
@@ -80,7 +89,9 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                         debug(" - ");
                         debugln(FinalBtnNum);
 
-/*
+
+
+
                         if(JoyStickNum == 2){
                           if(BtnNum == 39) SuppressStep++;
                           if(BtnNum == 40) SuppressStep++;
@@ -102,7 +113,10 @@ int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
                         }else{
                           SuppressStep = 0 ; 
                         }
-*/                        
+
+
+
+
                         }else{
                             if(IsModified){
                                 VirtAxMod_ReplacementKeyWork = true;
@@ -162,16 +176,38 @@ void GetInputs(){
         axis1_raw = analogRead(A1);
 
         //Nullpunkt-Korrektur der Werte
-        axis0 = axis0_raw + CorrAxis0;
-        axis1 = axis1_raw + CorrAxis1;
+//        axis0 = axis0_raw + CorrAxis0;
+//        axis1 = axis1_raw + CorrAxis1;
         //Nullpunkt flattern beseitigen (zwischen 501 und 523 wird zu 512)
-        if (axis0 > 501 && axis0 < 523){axis0 = 512;}
-        if (axis1 > 501 && axis1 < 523){axis1 = 512;}
+//        if (axis0 > 501 && axis0 < 523){axis0 = 512;}
+//        if (axis1 > 501 && axis1 < 523){axis1 = 512;}
         //Eventuelle Grenzverletzungen entfernen
+        //axis1 = map(axis1,125,860,0,1023);
+        //axis0 = map(axis0,90,980,0,1023);
+
+//        axis0 = map(axis0,125,860,0,1023);
+//        axis1 = map(axis1,90,980,0,1023);
+
+
+        axis0 = 512;
+        axis1 = 512;
+
+        if(axis0_raw < Axis0_cutoffLow) axis0 = map(axis0_raw,90,Axis0_cutoffLow,0,512);     
+    
+        if(axis0_raw > Axis0_cutoffHigh) axis0 = map(axis0_raw,Axis0_cutoffHigh,880,512,1023);     
+    
+        if(axis1_raw < Axis1_cutoffLow)  axis1 = map(axis1_raw,90,Axis1_cutoffLow,0,512);    
+    
+        if(axis1_raw > Axis1_cutoffHigh)   axis1 = map(axis1_raw,Axis1_cutoffHigh,960,512,1023);     
+    
+    
         if (axis0 < 0) axis0 = 0; 
         if (axis0 > 1023) axis0 = 1023;
         if (axis1 < 0) axis1 = 0;
+
         if (axis1 > 1023) axis1 = 1023;
+        
+
 
         //axis2 = analogRead(A2);
         //axis3 = analogRead(A3);

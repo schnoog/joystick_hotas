@@ -18,6 +18,9 @@ int RC = 9;
 int NC = 0;
 int ResetCount = 0;
 int WorkVal;
+long LastReadSuccess = 0;
+long tdiff = 0;
+
 #define SHT_LOX1 7
 
 
@@ -48,6 +51,7 @@ void IniSHT(boolean Restart){
 
 #if CONTINOUSTHROTTLE == 1
 void Restart_Continous(){
+  ResetDevice();
   debugln("Rebooting");
   delay(10);
   IniSHT(true);
@@ -77,11 +81,15 @@ int GetThrottleRaw(){
 
 #if CONTINOUSTHROTTLE == 1
     RC++;
-    if ( RC == 10){
+    tdiff = millis() - LastReadSuccess;
+//    if ( RC == 10){
+    if (tdiff > 200){
+
         RC=1;  
         if(lox.isRangeComplete()){
             //WorkVal = (int) lox.readRangeResult();
             WorkVal = (int) lox.readRange();
+            LastReadSuccess = millis();
             if(WorkVal > 0){
                 if(WorkVal < 300) LastRawThrottle = WorkVal;
                 NotOKVal = 0;
@@ -91,7 +99,7 @@ int GetThrottleRaw(){
                   NC = 0;
                   Restart_Continous();                  
                 }
-              
+
               
             }
                       

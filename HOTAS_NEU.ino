@@ -11,7 +11,7 @@
 
 //#include <SoftwareReset.h>
 #include "Adafruit_VL53L0X.h"
-
+#include <avr/wdt.h>
 #include "MyTools.h"
 
 #include "Adafruit_MCP23017.h"
