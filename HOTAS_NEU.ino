@@ -10,7 +10,8 @@
 #endif
 
 //#include <SoftwareReset.h>
-#include "Adafruit_VL53L0X.h"
+#include <Wire.h>
+#include <VL53L0X_mod.h>
 #include <avr/wdt.h>
 #include "MyTools.h"
 #include "MyADS.h"
@@ -38,6 +39,9 @@ void setup() {
   Throttle_Setup();
   MCP_Setup();
   ADS_Setup();
+
+//Joystick_Setup();
+
   LoopStart = micros();
 }
 

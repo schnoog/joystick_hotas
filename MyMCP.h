@@ -13,21 +13,6 @@ bool MCPR2 = false;
 
 boolean  MCP_READY(int MCP_Num){
     return true;
-    uint8_t addr;
-    byte error;
-
-
-    if (MCP_Num == 0) addr = addr1;
-    if (MCP_Num == 1) addr = addr2;
-    if (MCP_Num == 2) addr = addr3;
-    Wire.begin();
-    //Wire.setClock(20000);
-    Wire.beginTransmission(addr);
-    error = Wire.endTransmission();
-    if (error == 0) {
-        return true;
-    }
-    return false;
 }
 
 

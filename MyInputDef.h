@@ -46,28 +46,12 @@ void InputDef_Setup(){
     pinMode(A1, INPUT);
     pinMode(A2, INPUT);
     pinMode(A3, INPUT);
-    int average;
 
-    average = 0;
-    for (int i=0; i < 10; i++) {
-      average = average + analogRead(A0);
-    }
-    average = average/10;
-    CorrAxis0 = 512 - average; 
-
-    average = 0;
-    for (int i=0; i < 10; i++) {
-      average = average + analogRead(A1);
-    }
-    average = average/10;
-    CorrAxis1 = 512 - average;
-    CorrAxis0 = 0;
-    CorrAxis1 = 0;
 
 }
 
 
-int debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
+void debounceVal(int BtnNum, int CurrentVal, int JoyStickNum){
             int FinalBtnNum = 0;
             FinalBtnNum = BtnNum;
             reading = (byte)CurrentVal;
